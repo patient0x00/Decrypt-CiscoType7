@@ -1,0 +1,26 @@
+Function Decrypt-CiscoType7 ($Arg)
+{
+    cls
+    $Key = $Arg
+    $Constant = "tfd;kfoA,.iyewrkldJKD"
+    $PassLength = $((($Key).Length) -2)/2
+
+    $Password = New-Object System.Collections.Generic.List[string]
+
+    $j = 0
+    for($i=0; $i -lt $PassLength ; $i++)
+    {
+        [int]$Index = $Key[0] + $Key[1]
+        $Salt = $Constant[$(($Index - 1)+$i)]
+
+        $KeyIndexVal = $Key[$i+$j+2] + $Key[$($i+$j+3)]
+        $Hex2Dec = [convert]::toint16("$KeyIndexVal",16)
+        [char]$DecryptChar = $Hex2Dec -bxor $Salt
+
+        $Password.Add($DecryptChar)
+        $j++
+    }
+    Write-Output $([string]$Password).Replace(' ', '')
+}
+
+Decrypt-CiscoType7 "0822455D0A16"
